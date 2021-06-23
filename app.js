@@ -8,10 +8,11 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/products", productsRoutes);
+app.use("/media", express.static("media"));
 
-//db.sequelize.sync();
-db.sequelize.sync({ alter: true });
-// db.sequelize.sync({ force: true });
+db.sequelize.sync();
+//db.sequelize.sync({ alter: true });
+//db.sequelize.sync({ force: true });
 
 //error middleware
 app.use((err, req, res, next) => {

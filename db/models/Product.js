@@ -1,5 +1,7 @@
+const SequelizeSlugify = require("sequelize-slugify");
+
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define("Product", {
+  const Product = sequelize.define("Product", {
     name: { type: DataTypes.STRING, allowNull: false },
     price: {
       type: DataTypes.INTEGER,
@@ -15,4 +17,6 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.STRING,
     description: DataTypes.STRING,
   });
+  SequelizeSlugify.slugifyModel(Product, { source: ["name"] });
+  return Product;
 };
