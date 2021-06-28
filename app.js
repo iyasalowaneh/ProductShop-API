@@ -1,18 +1,17 @@
 const express = require("express");
 const cors = require("cors");
-const db = require("./db/models");
 const productsRoutes = require("./routes/productsRoutes");
+const shopsRoutes = require("./routes/shopsRoutes");
+
 const app = express();
 app.use(cors());
 
 app.use(express.json());
 
 app.use("/products", productsRoutes);
-app.use("/media", express.static("media"));
+app.use("/shops", shopsRoutes);
 
-db.sequelize.sync();
-//db.sequelize.sync({ alter: true });
-//db.sequelize.sync({ force: true });
+app.use("/media", express.static("media"));
 
 //error middleware
 app.use((err, req, res, next) => {

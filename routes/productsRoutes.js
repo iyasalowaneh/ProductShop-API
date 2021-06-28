@@ -1,6 +1,5 @@
 const multer = require("multer");
 const {
-  productCreat,
   productDelete,
   productList,
   productUpdate,
@@ -35,8 +34,6 @@ router.param("productId", async (req, res, next, productId) => {
 });
 
 router.get("/", productList);
-
-router.post("/", upload.single("image"), productCreat);
 
 router.delete("/:productId", productDelete);
 router.put("/:productId", upload.single("image"), productUpdate);
