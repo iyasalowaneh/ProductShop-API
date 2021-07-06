@@ -1,3 +1,4 @@
+const passport = require("passport");
 const multer = require("multer");
 const {
   shopCreat,
@@ -35,8 +36,19 @@ router.param("shopId", async (req, res, next, shopId) => {
 
 router.get("/", shopList);
 
-router.post("/", upload.single("image"), shopCreat);
-router.post("/:shopId/products", upload.single("image"), productCreat);
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
+  shopCreat
+);
+
+router.post(
+  "/:shopId/products",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
+  productCreat
+);
 
 // router.delete("/:shopId", shopDelete);
 // router.put("/:shopId", upload.single("image"), shopUpdate);

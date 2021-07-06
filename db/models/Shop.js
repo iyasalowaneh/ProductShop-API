@@ -11,6 +11,14 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.STRING,
   });
   SequelizeSlugify.slugifyModel(Shop, { source: ["name"] });
-
+  Shop.associate = (models) => {
+    models.User.hasMany(Shop, {
+      foreignKey: "userId",
+      as: "shops",
+    });
+    Shop.belongsTo(models.User, {
+      foreignKey: "userId",
+    });
+  };
   return Shop;
 };

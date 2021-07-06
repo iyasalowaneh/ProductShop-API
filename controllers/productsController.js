@@ -1,8 +1,9 @@
 const { Product } = require("../db/models");
-
+const { Shop } = require("../db/models");
 exports.fetchProduct = async (productId, next) => {
   try {
     const product = await Product.findByPk(productId);
+
     return product;
   } catch (error) {
     next(error);
@@ -11,6 +12,9 @@ exports.fetchProduct = async (productId, next) => {
 
 exports.productDelete = async (req, res, next) => {
   try {
+    if (req.shop.userId !== req.user.id)
+      throw { status: 401, message: "you can not delete a product" };
+
     await req.product.destroy();
     res.status(204).end();
   } catch (error) {
@@ -20,6 +24,8 @@ exports.productDelete = async (req, res, next) => {
 
 exports.productUpdate = async (req, res, next) => {
   try {
+    if (req.shop.userId !== req.user.id)
+      throw { status: 401, message: "you can not update a product" };
     if (req.file) {
       req.body.image = `http://${req.get("host")}/${req.file.path}`;
     }

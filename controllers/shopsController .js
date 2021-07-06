@@ -1,5 +1,7 @@
 const { Shop } = require("../db/models");
 const { Product } = require("../db/models");
+const { User } = require("../db/models");
+const user = require("../db/models/user");
 
 exports.fetchShop = async (shopId, next) => {
   try {
@@ -15,6 +17,11 @@ exports.shopCreat = async (req, res, next) => {
     if (req.file) {
       req.body.image = `http://${req.get("host")}/${req.file.path}`;
     }
+    console.log("here");
+    console.log(req.user);
+
+    req.body.userId = req.user.id;
+    console.log(req.user);
     const newShop = await Shop.create(req.body);
     res.status(201).json(newShop);
   } catch (error) {
@@ -24,12 +31,20 @@ exports.shopCreat = async (req, res, next) => {
 
 exports.productCreat = async (req, res, next) => {
   try {
-    if (req.file) {
-      req.body.image = `http://${req.get("host")}/${req.file.path}`;
+    if (req.user.id === req.shop.userId) {
+      if (req.file) {
+        req.body.image = `http://${req.get("host")}/${req.file.path}`;
+      }
+
+      req.body.shopId = req.shop.id;
+      const newProduct = await Product.create(req.body);
+      res.status(201).json(newProduct);
+    } else {
+      next({
+        status: 401,
+        message: "you can not create a product, the shop is not yours",
+      });
     }
-    req.body.shopId = req.shop.id;
-    const newProduct = await Product.create(req.body);
-    res.status(201).json(newProduct);
   } catch (error) {
     next(error);
   }

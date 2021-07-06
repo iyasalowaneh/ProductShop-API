@@ -1,3 +1,5 @@
+const passport = require("passport");
+
 const multer = require("multer");
 const {
   productDelete,
@@ -5,6 +7,7 @@ const {
   productUpdate,
   fetchProduct,
 } = require("../controllers/productsController");
+const { fetchShop } = require("../controllers/shopsController ");
 const express = require("express");
 
 const router = express.Router();
@@ -23,6 +26,8 @@ const upload = multer({
 router.param("productId", async (req, res, next, productId) => {
   const product = await fetchProduct(productId, next);
   if (product) {
+    const shop = await fetchShop(product.shopId, next);
+    req.shop = shop;
     req.product = product;
 
     next();
@@ -35,6 +40,15 @@ router.param("productId", async (req, res, next, productId) => {
 
 router.get("/", productList);
 
-router.delete("/:productId", productDelete);
-router.put("/:productId", upload.single("image"), productUpdate);
+router.delete(
+  "/:productId",
+  passport.authenticate("jwt", { session: false }),
+  productDelete
+);
+router.put(
+  "/:productId",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
+  productUpdate
+);
 module.exports = router;
